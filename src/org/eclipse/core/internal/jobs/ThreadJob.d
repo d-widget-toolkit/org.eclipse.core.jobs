@@ -14,7 +14,7 @@ module org.eclipse.core.internal.jobs.ThreadJob;
 
 import java.lang.all;
 import java.util.Set;
-import java.lang.JThread;
+import java.lang.Thread;
 import tango.core.sync.Mutex;
 import tango.core.sync.Condition;
 
@@ -177,7 +177,7 @@ class ThreadJob : Job {
             throw new OperationCanceledException();
         //check if there is a blocking thread before waiting
         InternalJob blockingJob = manager.findBlockingJob_package(this);
-        JThread blocker = blockingJob is null ? null : blockingJob.getThread_package();
+        Thread blocker = blockingJob is null ? null : blockingJob.getThread_package();
         ThreadJob result = this;
         try {
             //just return if lock listener decided to grant immediate access
@@ -185,7 +185,7 @@ class ThreadJob : Job {
                 return this;
             try {
                 waitStart(monitor, blockingJob);
-                final JThread getThis = JThread.currentThread();
+                final Thread getThis = Thread.currentThread();
                 while (true) {
                     if (isCanceled(monitor))
                         throw new OperationCanceledException();
@@ -321,7 +321,7 @@ class ThreadJob : Job {
      */
     private void waitEnd(IProgressMonitor monitor) {
         final LockManager lockManager = manager.getLockManager();
-        final JThread getThis = JThread.currentThread();
+        final Thread getThis = Thread.currentThread();
         if (isRunning()) {
             lockManager.addLockThread(getThis, getRule());
             //need to re-acquire any locks that were suspended while this thread was blocked on the rule
@@ -339,7 +339,7 @@ class ThreadJob : Job {
      * @param blockingJob The job that is blocking this thread, or <code>null</code>
      */
     private void waitStart(IProgressMonitor monitor, InternalJob blockingJob) {
-        manager.getLockManager().addLockWaitThread(JThread.currentThread(), getRule());
+        manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
         isBlocked = true;
         manager.reportBlocked(monitor, blockingJob);
     }

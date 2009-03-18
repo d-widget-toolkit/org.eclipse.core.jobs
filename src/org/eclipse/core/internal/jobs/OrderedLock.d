@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.OrderedLock;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import java.lang.all;
 import java.util.Set;
 
@@ -52,7 +52,7 @@ public class OrderedLock : ILock, ISchedulingRule {
     /**
      * The thread of the operation that currently owns the lock.
      */
-    private /+volatile+/ JThread currentOperationThread;
+    private /+volatile+/ Thread currentOperationThread;
     /**
      * Records the number of successive acquires in the same
      * thread. The lock is released only when the depth
@@ -115,13 +115,13 @@ public class OrderedLock : ILock, ISchedulingRule {
         if (semaphore is null)
             return true;
         if (DEBUG)
-            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation waiting to be executed... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation waiting to be executed... ", Thread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
         success = doAcquire(semaphore, delay);
-        manager.resumeSuspendedLocks(JThread.currentThread());
+        manager.resumeSuspendedLocks(Thread.currentThread());
         if (DEBUG && success)
-            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation started... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation started... ", Thread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
         else if (DEBUG)
-            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation timed out... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation timed out... ", Thread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
         return success;
     }
 
@@ -132,9 +132,9 @@ public class OrderedLock : ILock, ISchedulingRule {
     private synchronized bool attempt() {
         //return true if we already own the lock
         //also, if nobody is waiting, grant the lock immediately
-        if ((currentOperationThread is JThread.currentThread()) || (currentOperationThread is null && operations.isEmpty())) {
+        if ((currentOperationThread is Thread.currentThread()) || (currentOperationThread is null && operations.isEmpty())) {
             depth++;
-            setCurrentOperationThread(JThread.currentThread());
+            setCurrentOperationThread(Thread.currentThread());
             return true;
         }
         return false;
@@ -153,7 +153,7 @@ public class OrderedLock : ILock, ISchedulingRule {
      * otherwise a new semaphore will be created, enqueued, and returned.
      */
     private synchronized Semaphore createSemaphore() {
-        return attempt() ? null : enqueue(new Semaphore(JThread.currentThread()));
+        return attempt() ? null : enqueue(new Semaphore(Thread.currentThread()));
     }
 
     /**
@@ -178,12 +178,12 @@ public class OrderedLock : ILock, ISchedulingRule {
         semaphore = createSemaphore();
         if (semaphore is null)
             return true;
-        manager.addLockWaitThread(JThread.currentThread(), this);
+        manager.addLockWaitThread(Thread.currentThread(), this);
         try {
             success = semaphore.acquire(delay);
         } catch (InterruptedException e) {
             if (DEBUG)
-                getDwtLogger.info( __FILE__, __LINE__, Format("[{}] Operation interrupted while waiting... :-|", JThread.currentThread())); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, Format("[{}] Operation interrupted while waiting... :-|", Thread.currentThread())); //$NON-NLS-1$ //$NON-NLS-2$
             throw e;
         }
         if (success) {
@@ -191,7 +191,7 @@ public class OrderedLock : ILock, ISchedulingRule {
             updateCurrentOperation();
         } else {
             removeFromQueue(semaphore);
-            manager.removeLockWaitThread(JThread.currentThread(), this);
+            manager.removeLockWaitThread(Thread.currentThread(), this);
         }
         return success;
     }
@@ -277,7 +277,7 @@ public class OrderedLock : ILock, ISchedulingRule {
      * If newThread is null, release this lock from its previous owner.
      * If newThread is not null, grant this lock to newThread.
      */
-    private void setCurrentOperationThread(JThread newThread) {
+    private void setCurrentOperationThread(Thread newThread) {
         if ((currentOperationThread !is null) && (newThread is null))
             manager.removeLockThread(currentOperationThread, this);
         this.currentOperationThread = newThread;
@@ -312,6 +312,6 @@ public class OrderedLock : ILock, ISchedulingRule {
      */
     private synchronized void updateCurrentOperation() {
         operations.dequeue();
-        setCurrentOperationThread(JThread.currentThread());
+        setCurrentOperationThread(Thread.currentThread());
     }
 }

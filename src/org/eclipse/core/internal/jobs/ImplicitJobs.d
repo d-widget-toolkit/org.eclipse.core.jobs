@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.ImplicitJobs;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import java.lang.all;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,7 +67,7 @@ class ImplicitJobs {
     void begin(ISchedulingRule rule, IProgressMonitor monitor, bool suspend) {
         if (JobManager.DEBUG_BEGIN_END)
             JobManager.debug_(Format("Begin rule: {}", rule)); //$NON-NLS-1$
-        final JThread getThis = JThread.currentThread();
+        final Thread getThis = Thread.currentThread();
         ThreadJob threadJob;
         synchronized (this) {
             threadJob = cast(ThreadJob) threadJobs.get(getThis);
@@ -100,7 +100,7 @@ class ImplicitJobs {
             if (threadJob.acquireRule) {
                 //no need to re-acquire any locks because the thread did not wait to get this lock
                 if (manager.runNow_package(threadJob))
-                    manager.getLockManager().addLockThread(JThread.currentThread(), rule);
+                    manager.getLockManager().addLockThread(Thread.currentThread(), rule);
                 else
                     threadJob = threadJob.joinRun(monitor);
             }
@@ -126,7 +126,7 @@ class ImplicitJobs {
     synchronized void end(ISchedulingRule rule, bool resume) {
         if (JobManager.DEBUG_BEGIN_END)
             JobManager.debug_(Format("End rule: {}", rule)); //$NON-NLS-1$
-        ThreadJob threadJob = cast(ThreadJob) threadJobs.get(JThread.currentThread());
+        ThreadJob threadJob = cast(ThreadJob) threadJobs.get(Thread.currentThread());
         if (threadJob is null)
             Assert.isLegal(rule is null, Format("endRule without matching beginRule: {}", rule)); //$NON-NLS-1$
         else if (threadJob.pop(rule)) {
@@ -140,7 +140,7 @@ class ImplicitJobs {
      * @param lastJob The last job to run in this thread
      */
     void endJob(InternalJob lastJob) {
-        final JThread getThis = JThread.currentThread();
+        final Thread getThis = Thread.currentThread();
         IStatus error;
         synchronized (this) {
             ThreadJob threadJob = cast(ThreadJob) threadJobs.get(getThis);
@@ -163,7 +163,7 @@ class ImplicitJobs {
     }
 
     private void endThreadJob(ThreadJob threadJob, bool resume) {
-        JThread getThis = JThread.currentThread();
+        Thread getThis = Thread.currentThread();
         //clean up when last rule scope exits
         threadJobs.remove(getThis);
         ISchedulingRule rule = threadJob.getRule();
@@ -253,11 +253,11 @@ class ImplicitJobs {
     /**
      * Implements IJobManager#transferRule(ISchedulingRule, Thread)
      */
-    synchronized void transfer(ISchedulingRule rule, JThread destinationThread) {
+    synchronized void transfer(ISchedulingRule rule, Thread destinationThread) {
         //nothing to do for null
         if (rule is null)
             return;
-        JThread getThis = JThread.currentThread();
+        Thread getThis = Thread.currentThread();
         //nothing to do if transferring to the same thread
         if (getThis is destinationThread)
             return;

@@ -11,7 +11,7 @@
  **********************************************************************/
 module org.eclipse.core.internal.jobs.JobMessages;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import tango.time.WallClock;
 import tango.text.convert.TimeStamp;
 
@@ -53,7 +53,7 @@ public class JobMessages : NLS {
         char[30] buf;
         buffer.append(tango.text.convert.TimeStamp.format( buf, WallClock.now()));
         buffer.append(" - ["); //$NON-NLS-1$
-        buffer.append(JThread.currentThread().getName());
+        buffer.append(Thread.currentThread().getName());
         buffer.append("] "); //$NON-NLS-1$
         buffer.append(message);
         getDwtLogger.info( __FILE__, __LINE__, buffer.toString());

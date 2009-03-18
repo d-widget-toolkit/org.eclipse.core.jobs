@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.WorkerPool;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import tango.core.sync.Mutex;
 import tango.core.sync.Condition;
 import java.lang.all;
@@ -125,7 +125,7 @@ class WorkerPool {
         //do not become the owners of the same rule in the graph
         if ((job.getRule_package() !is null) && !(cast(ThreadJob)job )) {
             //remove any locks this thread may be owning on that rule
-            manager.getLockManager().removeLockCompletely(JThread.currentThread(), job.getRule_package());
+            manager.getLockManager().removeLockCompletely(Thread.currentThread(), job.getRule_package());
         }
         manager.endJob_package(job, result, true);
         //ensure this thread no longer owns any scheduling rules
@@ -277,7 +277,7 @@ class WorkerPool {
                 if ((job.getRule() !is null) && !(cast(ThreadJob)job )) {
                     //don't need to re-aquire locks because it was not recorded in the graph
                     //that this thread waited to get this rule
-                    manager.getLockManager().addLockThread(JThread.currentThread(), job.getRule());
+                    manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
                 }
                 //see if we need to wake another worker
                 if (manager.sleepHint_package() <= 0)

@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.runtime.jobs.LockListener;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import java.lang.all;
 import java.util.Set;
 
@@ -50,7 +50,7 @@ public class LockListener {
      * @return <code>true</code> if the thread should be granted immediate access,
      * and <code>false</code> if it should wait for the lock to be available
      */
-    public bool aboutToWait(JThread lockOwner) {
+    public bool aboutToWait(Thread lockOwner) {
         return false;
     }
 

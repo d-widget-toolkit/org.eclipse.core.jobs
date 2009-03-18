@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.Deadlock;
 
-import java.lang.JThread;
+import java.lang.Thread;
 
 import java.lang.all;
 
@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 class Deadlock {
     //all the threads which are involved in the deadlock
-    private JThread[] threads;
+    private Thread[] threads;
     //the thread whose locks will be suspended to resolve deadlock
-    private JThread candidate;
+    private Thread candidate;
     //the locks that will be suspended
     private ISchedulingRule[] locks;
 
-    public this(JThread[] threads, ISchedulingRule[] locks, JThread candidate) {
+    public this(Thread[] threads, ISchedulingRule[] locks, Thread candidate) {
         this.threads = threads;
         this.locks = locks;
         this.candidate = candidate;
@@ -42,11 +42,11 @@ class Deadlock {
         return locks;
     }
 
-    public JThread getCandidate() {
+    public Thread getCandidate() {
         return candidate;
     }
 
-    public JThread[] getThreads() {
+    public Thread[] getThreads() {
         return threads;
     }
 }

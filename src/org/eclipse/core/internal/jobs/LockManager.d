@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.LockManager;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import java.lang.all;
 import java.util.Stack;
 import java.util.HashMap;
@@ -117,7 +117,7 @@ public class LockManager {
     /* (non-Javadoc)
      * Method declared on LockListener
      */
-    public bool aboutToWait(JThread lockOwner) {
+    public bool aboutToWait(Thread lockOwner) {
         if (lockListener is null)
             return false;
         try {
@@ -133,7 +133,7 @@ public class LockManager {
     /**
      * This thread has just acquired a lock.  Update graph.
      */
-    void addLockThread(JThread thread, ISchedulingRule lock) {
+    void addLockThread(Thread thread, ISchedulingRule lock) {
         if (locks is null)
             return;
         try {
@@ -148,7 +148,7 @@ public class LockManager {
     /**
      * This thread has just been refused a lock.  Update graph and check for deadlock.
      */
-    void addLockWaitThread(JThread thread, ISchedulingRule lock) {
+    void addLockWaitThread(Thread thread, ISchedulingRule lock) {
         if (locks is null)
             return;
         try {
@@ -222,13 +222,13 @@ public class LockManager {
     public bool isLockOwner() {
         //all job threads have to be treated as lock owners because UI thread
         //may try to join a job
-        JThread current = JThread.currentThread();
+        Thread current = Thread.currentThread();
         if (cast(Worker)current )
             return true;
         if (locks is null)
             return false;
         synchronized (locks) {
-            return locks.contains(JThread.currentThread());
+            return locks.contains(Thread.currentThread());
         }
     }
 
@@ -242,7 +242,7 @@ public class LockManager {
     /**
      * Releases all the acquires that were called on the given rule. Needs to be called only once.
      */
-    void removeLockCompletely(JThread thread, ISchedulingRule rule) {
+    void removeLockCompletely(Thread thread, ISchedulingRule rule) {
         if (locks is null)
             return;
         try {
@@ -257,7 +257,7 @@ public class LockManager {
     /**
      * This thread has just released a lock.  Update graph.
      */
-    void removeLockThread(JThread thread, ISchedulingRule lock) {
+    void removeLockThread(Thread thread, ISchedulingRule lock) {
         try {
             synchronized (locks) {
                 locks.lockReleased(thread, lock);
@@ -270,7 +270,7 @@ public class LockManager {
     /**
      * This thread has just stopped waiting for a lock. Update graph.
      */
-    void removeLockWaitThread(JThread thread, ISchedulingRule lock) {
+    void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
         try {
             synchronized (locks) {
                 locks.lockWaitStop(thread, lock);
@@ -283,7 +283,7 @@ public class LockManager {
     /**
      * Resumes all the locks that were suspended while this thread was waiting to acquire another lock.
      */
-    void resumeSuspendedLocks(JThread owner) {
+    void resumeSuspendedLocks(Thread owner) {
         LockState[] toResume;
         synchronized (suspendedLocks) {
             Stack prevLocks = cast(Stack) suspendedLocks.get(owner);

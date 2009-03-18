@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.Worker;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import java.lang.all;
 import java.util.Set;
 
@@ -32,7 +32,7 @@ import org.eclipse.core.internal.jobs.JobManager;
  * A worker thread processes jobs supplied to it by the worker pool.  When
  * the worker pool gives it a null job, the worker dies.
  */
-public class Worker : JThread {
+public class Worker : Thread {
     //worker number used for debugging purposes only
     private static int nextWorkerNumber = 0;
     private /+volatile+/ InternalJob currentJob_;
@@ -80,7 +80,7 @@ public class Worker : JThread {
 //                     result = handleException(currentJob_, e);
                 } finally {
                     //clear interrupted state for this thread
-                    JThread.interrupted();
+                    Thread.interrupted();
 
                     //result must not be null
                     if (result is null)

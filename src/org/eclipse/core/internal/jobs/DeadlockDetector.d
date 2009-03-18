@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.DeadlockDetector;
 
-import java.lang.JThread;
+import java.lang.Thread;
 
 import java.lang.all;
 import java.util.ArrayList;
@@ -100,9 +100,9 @@ class DeadlockDetector {
      * are actually deadlocked with the current thread.
      * Add the threads that form deadlock to the deadlockedThreads list.
      */
-    private bool addCycleThreads(ArrayList deadlockedThreads, JThread next) {
+    private bool addCycleThreads(ArrayList deadlockedThreads, Thread next) {
         //get the thread that block the given thread from running
-        JThread[] blocking = blockingThreads(next);
+        Thread[] blocking = blockingThreads(next);
         //if the thread is not blocked by other threads, then it is not part of a deadlock
         if (blocking.length is 0)
             return false;
@@ -127,7 +127,7 @@ class DeadlockDetector {
     /**
      * Get the thread(s) that own the lock this thread is waiting for.
      */
-    private JThread[] blockingThreads(JThread current) {
+    private Thread[] blockingThreads(Thread current) {
         //find the lock this thread is waiting for
         ISchedulingRule lock = cast(ISchedulingRule) getWaitingLock(current);
         return getThreadsOwningLock(lock);
@@ -166,7 +166,7 @@ class DeadlockDetector {
      * Returns true IFF the matrix contains a row for the given thread.
      * (meaning the given thread either owns locks or is waiting for locks)
      */
-    bool contains(JThread t) {
+    bool contains(Thread t) {
         return lockThreads.contains(t);
     }
 
@@ -199,7 +199,7 @@ class DeadlockDetector {
     /**
      * Returns all the locks owned by the given thread
      */
-    private Object[] getOwnedLocks(JThread current) {
+    private Object[] getOwnedLocks(Thread current) {
         ArrayList ownedLocks = new ArrayList(1);
         int index = indexOf(current, false);
 
@@ -215,7 +215,7 @@ class DeadlockDetector {
     /**
      * Returns an array of threads that form the deadlock (usually 2).
      */
-    private JThread[] getThreadsInDeadlock(JThread cause) {
+    private Thread[] getThreadsInDeadlock(Thread cause) {
         ArrayList deadlockedThreads = new ArrayList(2);
         /**
          * if the thread that caused deadlock doesn't own any locks, then it is not part
@@ -224,15 +224,15 @@ class DeadlockDetector {
         if (ownsLocks(cause))
             deadlockedThreads.add(cause);
         addCycleThreads(deadlockedThreads, cause);
-        return arraycast!(JThread)( deadlockedThreads.toArray());
+        return arraycast!(Thread)( deadlockedThreads.toArray());
     }
 
     /**
      * Returns the thread(s) that own the given lock.
      */
-    private JThread[] getThreadsOwningLock(ISchedulingRule rule) {
+    private Thread[] getThreadsOwningLock(ISchedulingRule rule) {
         if (rule is null)
-            return new JThread[0];
+            return new Thread[0];
         int lockIndex = indexOf(rule, false);
         ArrayList blocking = new ArrayList(1);
         for (int i = 0; i < graph.length; i++) {
@@ -243,13 +243,13 @@ class DeadlockDetector {
             getDwtLogger.info( __FILE__, __LINE__, "Lock {} is involved in deadlock but is not owned by any thread.", rule ); //$NON-NLS-1$ //$NON-NLS-2$
         if ((blocking.size() > 1) && (cast(ILock)rule ) && (JobManager.DEBUG_LOCKS))
             getDwtLogger.info( __FILE__, __LINE__, "Lock {} is owned by more than 1 thread, but it is not a rule.", rule ); //$NON-NLS-1$ //$NON-NLS-2$
-        return arraycast!(JThread)( blocking.toArray());
+        return arraycast!(Thread)( blocking.toArray());
     }
 
     /**
      * Returns the lock the given thread is waiting for.
      */
-    private Object getWaitingLock(JThread current) {
+    private Object getWaitingLock(Thread current) {
         int index = indexOf(current, false);
         //find the lock that this thread is waiting for
         for (int j = 0; j < graph[index].length; j++) {
@@ -278,7 +278,7 @@ class DeadlockDetector {
      * Returns the index of the given thread in the thread array. If the thread
      * is not present in the array, it is added to the end.
      */
-    private int indexOf(JThread owner, bool add) {
+    private int indexOf(Thread owner, bool add) {
         int index = lockThreads.indexOf(owner);
         if ((index < 0) && add) {
             lockThreads.add(owner);
@@ -298,7 +298,7 @@ class DeadlockDetector {
     /**
      * The given lock was acquired by the given thread.
      */
-    void lockAcquired(JThread owner, ISchedulingRule lock) {
+    void lockAcquired(Thread owner, ISchedulingRule lock) {
         int lockIndex = indexOf(lock, true);
         int threadIndex = indexOf(owner, true);
         if (resize)
@@ -332,7 +332,7 @@ class DeadlockDetector {
     /**
      * The given lock was released by the given thread. Update the graph.
      */
-    void lockReleased(JThread owner, ISchedulingRule lock) {
+    void lockReleased(Thread owner, ISchedulingRule lock) {
         int lockIndex = indexOf(lock, false);
         int threadIndex = indexOf(owner, false);
         //make sure the lock and thread exist in the graph
@@ -372,7 +372,7 @@ class DeadlockDetector {
      * The given scheduling rule is no longer used because the job that invoked it is done.
      * Release this rule regardless of how many times it was acquired.
      */
-    void lockReleasedCompletely(JThread owner, ISchedulingRule rule) {
+    void lockReleasedCompletely(Thread owner, ISchedulingRule rule) {
         int ruleIndex = indexOf(rule, false);
         int threadIndex = indexOf(owner, false);
         //need to make sure that the given thread and rule were not already removed from the graph
@@ -402,7 +402,7 @@ class DeadlockDetector {
      * The given thread could not get the given lock and is waiting for it.
      * Update the graph.
      */
-    Deadlock lockWaitStart(JThread client, ISchedulingRule lock) {
+    Deadlock lockWaitStart(Thread client, ISchedulingRule lock) {
         setToWait(client, lock, false);
         int lockIndex = indexOf(lock, false);
         int[] temp = new int[lockThreads.size()];
@@ -410,8 +410,8 @@ class DeadlockDetector {
         if (!checkWaitCycles(temp, lockIndex))
             return null;
         //there is a deadlock in the graph
-        JThread[] threads = getThreadsInDeadlock(client);
-        JThread candidate = resolutionCandidate(threads);
+        Thread[] threads = getThreadsInDeadlock(client);
+        Thread candidate = resolutionCandidate(threads);
         ISchedulingRule[] locksToSuspend = realLocksForThread(candidate);
         Deadlock deadlock = new Deadlock(threads, locksToSuspend, candidate);
         //find a thread whose locks can be suspended to resolve the deadlock
@@ -431,7 +431,7 @@ class DeadlockDetector {
      * The given thread has stopped waiting for the given lock.
      * Update the graph.
      */
-    void lockWaitStop(JThread owner, ISchedulingRule lock) {
+    void lockWaitStop(Thread owner, ISchedulingRule lock) {
         int lockIndex = indexOf(lock, false);
         int threadIndex = indexOf(owner, false);
         //make sure the thread and lock exist in the graph
@@ -454,7 +454,7 @@ class DeadlockDetector {
     /**
      * Returns true IFF the given thread owns a single lock
      */
-    private bool ownsLocks(JThread cause) {
+    private bool ownsLocks(Thread cause) {
         int threadIndex = indexOf(cause, false);
         for (int j = 0; j < graph[threadIndex].length; j++) {
             if (graph[threadIndex][j] > NO_STATE)
@@ -467,7 +467,7 @@ class DeadlockDetector {
      * Returns true IFF the given thread owns a single real lock.
      * A real lock is a lock that can be suspended.
      */
-    private bool ownsRealLocks(JThread owner) {
+    private bool ownsRealLocks(Thread owner) {
         int threadIndex = indexOf(owner, false);
         for (int j = 0; j < graph[threadIndex].length; j++) {
             if (graph[threadIndex][j] > NO_STATE) {
@@ -483,7 +483,7 @@ class DeadlockDetector {
      * Return true IFF this thread owns rule locks (i.e. implicit locks which
      * cannot be suspended)
      */
-    private bool ownsRuleLocks(JThread owner) {
+    private bool ownsRuleLocks(Thread owner) {
         int threadIndex = indexOf(owner, false);
         for (int j = 0; j < graph[threadIndex].length; j++) {
             if (graph[threadIndex][j] > NO_STATE) {
@@ -499,7 +499,7 @@ class DeadlockDetector {
      * Returns an array of real locks that are owned by the given thread.
      * Real locks are locks that implement the ILock interface and can be suspended.
      */
-    private ISchedulingRule[] realLocksForThread(JThread owner) {
+    private ISchedulingRule[] realLocksForThread(Thread owner) {
         int threadIndex = indexOf(owner, false);
         ArrayList ownedLocks = new ArrayList(1);
         for (int j = 0; j < graph[threadIndex].length; j++) {
@@ -608,7 +608,7 @@ class DeadlockDetector {
     private void reportDeadlock(Deadlock deadlock) {
         String msg = "Deadlock detected. All locks owned by thread " ~ deadlock.getCandidate().getName() ~ " will be suspended."; //$NON-NLS-1$ //$NON-NLS-2$
         MultiStatus main = new MultiStatus(JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, new IllegalStateException());
-        JThread[] threads = deadlock.getThreads();
+        Thread[] threads = deadlock.getThreads();
         for (int i = 0; i < threads.length; i++) {
             Object[] ownedLocks = getOwnedLocks(threads[i]);
             Object waitLock = getWaitingLock(threads[i]);
@@ -653,7 +653,7 @@ class DeadlockDetector {
      * Get the thread whose locks can be suspended. (i.e. all locks it owns are
      * actual locks and not rules). Return the first thread in the array by default.
      */
-    private JThread resolutionCandidate(JThread[] candidates) {
+    private Thread resolutionCandidate(Thread[] candidates) {
         //first look for a candidate that has no scheduling rules
         for (int i = 0; i < candidates.length; i++) {
             if (!ownsRuleLocks(candidates[i]))
@@ -671,7 +671,7 @@ class DeadlockDetector {
     /**
      * The given thread is waiting for the given lock. Update the graph.
      */
-    private void setToWait(JThread owner, ISchedulingRule lock, bool suspend) {
+    private void setToWait(Thread owner, ISchedulingRule lock, bool suspend) {
         bool needTransfer = false;
         /**
          * if we are adding an entry where a thread is waiting on a scheduling rule,
@@ -705,7 +705,7 @@ class DeadlockDetector {
         sb.append("\n");
         for (int i = 0; i < graph.length; i++) {
             sb.append(" ");
-            sb.append( (cast(JThread) lockThreads.get(i)).getName() );
+            sb.append( (cast(Thread) lockThreads.get(i)).getName() );
             sb.append(" : ");
             for (int j = 0; j < graph[i].length; j++) {
                 sb.append(" ");

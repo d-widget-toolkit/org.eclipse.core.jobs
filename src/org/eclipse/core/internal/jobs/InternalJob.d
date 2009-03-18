@@ -15,7 +15,7 @@ module org.eclipse.core.internal.jobs.InternalJob;
 import java.lang.all;
 import java.util.Map;
 import java.util.Set;
-import java.lang.JThread;
+import java.lang.Thread;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -128,7 +128,7 @@ public abstract class InternalJob : PlatformObject, Comparable {
     /*
      * The thread that is currently running this job
      */
-    private /+volatile+/ JThread thread = null;
+    private /+volatile+/ Thread thread = null;
 
     protected this(String name) {
         Assert.isNotNull(name);
@@ -293,10 +293,10 @@ public abstract class InternalJob : PlatformObject, Comparable {
     /* (non-javadoc)
      * @see Job.getThread
      */
-    protected JThread getThread() {
+    protected Thread getThread() {
         return thread;
     }
-    package JThread getThread_package() {
+    package Thread getThread_package() {
         return getThread();
     }
 
@@ -564,10 +564,10 @@ public abstract class InternalJob : PlatformObject, Comparable {
     /* (non-javadoc)
      * @see Job.setThread
      */
-    protected void setThread(JThread thread) {
+    protected void setThread(Thread thread) {
         this.thread = thread;
     }
-    package void setThread_package(JThread thread) {
+    package void setThread_package(Thread thread) {
         setThread(thread);
     }
 

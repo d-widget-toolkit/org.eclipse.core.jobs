@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.LockListener;
 
 import org.eclipse.core.runtime.jobs.ProgressProvider;
-import java.lang.JThread;
+import java.lang.Thread;
 
 /**
  * The job manager provides facilities for scheduling, querying, and maintaining jobs
@@ -408,7 +408,7 @@ public interface IJobManager {
      * @param destinationThread The new owner for the transferred rule.
      * @since 3.1
      */
-    public void transferRule(ISchedulingRule rule, JThread destinationThread);
+    public void transferRule(ISchedulingRule rule, Thread destinationThread);
 
     /**
      * Resumes scheduling of all sleeping jobs in the given family.  This method

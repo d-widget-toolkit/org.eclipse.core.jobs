@@ -12,19 +12,19 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.Semaphore;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import tango.core.sync.Mutex;
 import tango.core.sync.Condition;
 import java.lang.all;
 
 public class Semaphore {
     protected long notifications;
-    protected JThread runnable;
+    protected Thread runnable;
 
     private Mutex mutex;
     private Condition condition;
 
-    public this(JThread runnable) {
+    public this(Thread runnable) {
         mutex = new Mutex;
         condition = new Condition(mutex);
         this.runnable = runnable;

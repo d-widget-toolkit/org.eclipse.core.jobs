@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.HashSet;
 import tango.time.WallClock;
 import tango.time.Time;
-import java.lang.JThread;
+import java.lang.Thread;
 
 //don't use ICU because this is used for debugging only (see bug 135785)
 // import java.text.DateFormat;
@@ -195,7 +195,7 @@ public class JobManager : IJobManager {
             msgBuf.append('-');
         }
         msgBuf.append('[');
-        msgBuf.append(JThread.currentThread().toString());
+        msgBuf.append(Thread.currentThread().toString());
         msgBuf.append(']');
         msgBuf.append(msg);
         getDwtLogger.info( __FILE__, __LINE__, "{}", msgBuf.toString());
@@ -469,7 +469,7 @@ public class JobManager : IJobManager {
      * @see org.eclipse.core.runtime.jobs.IJobManager#currentJob()
      */
     public Job currentJob() {
-        JThread current = JThread.currentThread();
+        Thread current = Thread.currentThread();
         if (cast(Worker)current )
             return (cast(Worker) current).currentJob();
         synchronized (lock) {
@@ -553,7 +553,7 @@ public class JobManager : IJobManager {
             }
 
             for (int waitAttempts = 0; waitAttempts < 3; waitAttempts++) {
-                JThread.yield();
+                Thread.yield();
                 synchronized (lock) {
                     if (running.isEmpty())
                         break;
@@ -571,11 +571,11 @@ public class JobManager : IJobManager {
                     }
                 }
                 try {
-                    JThread.sleep(100);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     //ignore
                 }
-                JThread.yield();
+                Thread.yield();
             }
 
             synchronized (lock) { // retrieve list of the jobs that are still running
@@ -776,7 +776,7 @@ public class JobManager : IJobManager {
             if (suspended && state !is Job.RUNNING)
                 return;
             //it's an error for a job to join itself
-            if (state is Job.RUNNING && job.getThread_package() is JThread.currentThread())
+            if (state is Job.RUNNING && job.getThread_package() is Thread.currentThread())
                 throw new IllegalStateException("Job attempted to join itself"); //$NON-NLS-1$
             //the semaphore will be released when the job is done
             barrier = new Semaphore(null);
@@ -881,13 +881,13 @@ public class JobManager : IJobManager {
                     monitor.subTask(NLS.bind(JobMessages.jobs_waitFamSub, Integer.toString(jobsLeft)));
                 }
 
-                if (JThread.interrupted())
+                if (Thread.interrupted())
                     throw new InterruptedException();
                 if (monitor.isCanceled())
                     throw new OperationCanceledException();
                 //notify hook to service pending syncExecs before falling asleep
                 lockManager.aboutToWait(null);
-                JThread.sleep(100);
+                Thread.sleep(100);
             }
         } finally {
             lockManager.aboutToRelease();
@@ -1303,7 +1303,7 @@ public class JobManager : IJobManager {
     /* non-Javadoc)
      * @see org.eclipse.core.runtime.jobs.IJobManager#transferRule()
      */
-    public void transferRule(ISchedulingRule rule, JThread destinationThread) {
+    public void transferRule(ISchedulingRule rule, Thread destinationThread) {
         implicitJobs.transfer(rule, destinationThread);
     }
 

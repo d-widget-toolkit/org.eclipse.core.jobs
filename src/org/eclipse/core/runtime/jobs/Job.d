@@ -12,7 +12,7 @@
  *******************************************************************************/
 module org.eclipse.core.runtime.jobs.Job;
 
-import java.lang.JThread;
+import java.lang.Thread;
 import java.lang.all;
 import java.util.Set;
 
@@ -336,7 +336,7 @@ public abstract class Job : InternalJob, IAdaptable {
      * @return the thread this job is running in, or <code>null</code>
      * if this job is not running or the thread is unknown.
      */
-    public final JThread getThread() {
+    public final Thread getThread() {
         return super.getThread();
     }
 
@@ -610,7 +610,7 @@ public abstract class Job : InternalJob, IAdaptable {
      * @see #ASYNC_FINISH
      * @see #run(IProgressMonitor)
      */
-    public final void setThread(JThread thread) {
+    public final void setThread(Thread thread) {
         super.setThread(thread);
     }
 
