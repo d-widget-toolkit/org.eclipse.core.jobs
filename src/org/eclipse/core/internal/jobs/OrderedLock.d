@@ -13,7 +13,6 @@
 module org.eclipse.core.internal.jobs.OrderedLock;
 
 import java.lang.JThread;
-import tango.io.Stdout;
 import java.lang.all;
 import java.util.Set;
 
@@ -116,13 +115,13 @@ public class OrderedLock : ILock, ISchedulingRule {
         if (semaphore is null)
             return true;
         if (DEBUG)
-            Stdout.formatln("[{}] Operation waiting to be executed... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation waiting to be executed... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
         success = doAcquire(semaphore, delay);
         manager.resumeSuspendedLocks(JThread.currentThread());
         if (DEBUG && success)
-            Stdout.formatln("[{}] Operation started... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation started... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
         else if (DEBUG)
-            Stdout.formatln("[{}] Operation timed out... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "[{}] Operation timed out... ", JThread.currentThread(), this); //$NON-NLS-1$ //$NON-NLS-2$
         return success;
     }
 
@@ -184,7 +183,7 @@ public class OrderedLock : ILock, ISchedulingRule {
             success = semaphore.acquire(delay);
         } catch (InterruptedException e) {
             if (DEBUG)
-                Stdout.formatln(Format("[{}] Operation interrupted while waiting... :-|", JThread.currentThread())); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, Format("[{}] Operation interrupted while waiting... :-|", JThread.currentThread())); //$NON-NLS-1$ //$NON-NLS-2$
             throw e;
         }
         if (success) {

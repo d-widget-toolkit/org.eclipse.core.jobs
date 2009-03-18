@@ -13,7 +13,6 @@
 module org.eclipse.core.internal.jobs.ImplicitJobs;
 
 import java.lang.JThread;
-import tango.io.Stdout;
 import java.lang.all;
 import java.util.Iterator;
 import java.util.Map;
@@ -159,7 +158,7 @@ class ImplicitJobs {
             RuntimeLog.log(error);
         } catch (RuntimeException e) {
             //failed to log, so print to console instead
-            Stderr.formatln("{}", error.getMessage());
+            getDwtLogger.error( __FILE__, __LINE__, "{}", error.getMessage());
         }
     }
 

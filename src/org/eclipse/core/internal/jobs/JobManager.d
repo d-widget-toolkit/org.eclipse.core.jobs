@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
-import tango.io.Stdout;
 import tango.time.WallClock;
 import tango.time.Time;
 import java.lang.JThread;
@@ -199,7 +198,7 @@ public class JobManager : IJobManager {
         msgBuf.append(JThread.currentThread().toString());
         msgBuf.append(']');
         msgBuf.append(msg);
-        Stdout.formatln( "{}", msgBuf.toString());
+        getDwtLogger.info( __FILE__, __LINE__, "{}", msgBuf.toString());
     }
 
     /**
@@ -594,7 +593,7 @@ public class JobManager : IJobManager {
                 // TODO the RuntimeLog.log in its current implementation won't produce a log
                 // during this stage of shutdown. For now add a standard error output.
                 // One the logging story is improved, the System.err output below can be removed:
-                Stderr.formatln("{}", msg);
+                getDwtLogger.error( __FILE__, __LINE__, "{}", msg);
             }
         }
 

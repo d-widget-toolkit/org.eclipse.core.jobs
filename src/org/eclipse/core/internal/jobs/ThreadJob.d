@@ -14,7 +14,6 @@ module org.eclipse.core.internal.jobs.ThreadJob;
 
 import java.lang.all;
 import java.util.Set;
-import tango.io.Stdout;
 import java.lang.JThread;
 import tango.core.sync.Mutex;
 import tango.core.sync.Condition;
@@ -118,7 +117,7 @@ class ThreadJob : Job {
         buf.append(".  See log for trace information if rule tracing is enabled."); //$NON-NLS-1$
         String msg = buf.toString();
         if (JobManager.DEBUG || JobManager.DEBUG_BEGIN_END) {
-            Stdout.formatln("{}",msg);
+            getDwtLogger.info( __FILE__, __LINE__, "{}",msg);
             Exception t = lastPush is null ? cast(Exception)new IllegalArgumentException("") : cast(Exception)lastPush;
             IStatus error = new Status(IStatus.ERROR, JobManager.PI_JOBS, 1, msg, t);
             RuntimeLog.log(error);
@@ -137,7 +136,7 @@ class ThreadJob : Job {
         buf.append(Format("{}",baseRule));
         String msg = buf.toString();
         if (JobManager.DEBUG) {
-            Stdout.formatln("{}",msg);
+            getDwtLogger.info( __FILE__, __LINE__, "{}",msg);
             IStatus error = new Status(IStatus.ERROR, JobManager.PI_JOBS, 1, msg, new IllegalArgumentException(""));
             RuntimeLog.log(error);
         }

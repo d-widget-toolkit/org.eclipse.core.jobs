@@ -13,7 +13,6 @@
 module org.eclipse.core.internal.jobs.DeadlockDetector;
 
 import java.lang.JThread;
-import tango.io.Stdout;
 
 import java.lang.all;
 import java.util.ArrayList;
@@ -241,9 +240,9 @@ class DeadlockDetector {
                 blocking.add(lockThreads.get(i));
         }
         if ((blocking.size() is 0) && (JobManager.DEBUG_LOCKS))
-            Stdout.formatln(Format("Lock {} is involved in deadlock but is not owned by any thread.", rule )); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "Lock {} is involved in deadlock but is not owned by any thread.", rule ); //$NON-NLS-1$ //$NON-NLS-2$
         if ((blocking.size() > 1) && (cast(ILock)rule ) && (JobManager.DEBUG_LOCKS))
-            Stdout.formatln(Format("Lock {} is owned by more than 1 thread, but it is not a rule.", rule )); //$NON-NLS-1$ //$NON-NLS-2$
+            getDwtLogger.info( __FILE__, __LINE__, "Lock {} is owned by more than 1 thread, but it is not a rule.", rule ); //$NON-NLS-1$ //$NON-NLS-2$
         return arraycast!(JThread)( blocking.toArray());
     }
 
@@ -339,12 +338,12 @@ class DeadlockDetector {
         //make sure the lock and thread exist in the graph
         if (threadIndex < 0) {
             if (JobManager.DEBUG_LOCKS)
-                Stdout.formatln("[lockReleased] Lock {} was already released by thread {}", lock, owner.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, "[lockReleased] Lock {} was already released by thread {}", lock, owner.getName()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         if (lockIndex < 0) {
             if (JobManager.DEBUG_LOCKS)
-                Stdout.formatln("[lockReleased] Thread {} already released lock {}", owner.getName(), lock); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, "[lockReleased] Thread {} already released lock {}", owner.getName(), lock); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         //if this lock was suspended, set it to NO_STATE
@@ -358,7 +357,7 @@ class DeadlockDetector {
             if ((lock.isConflicting(cast(ISchedulingRule) locks.get(j))) || (!(cast(ILock)lock ) && !(cast(ILock)locks.get(j)) && (graph[threadIndex][j] > NO_STATE))) {
                 if (graph[threadIndex][j] is NO_STATE) {
                     if (JobManager.DEBUG_LOCKS)
-                        Stdout.formatln("[lockReleased] More releases than acquires for thread {} and lock {}", owner.getName(), lock); //$NON-NLS-1$ //$NON-NLS-2$
+                        getDwtLogger.info( __FILE__, __LINE__, "[lockReleased] More releases than acquires for thread {} and lock {}", owner.getName(), lock); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
                     graph[threadIndex][j]--;
                 }
@@ -379,12 +378,12 @@ class DeadlockDetector {
         //need to make sure that the given thread and rule were not already removed from the graph
         if (threadIndex < 0) {
             if (JobManager.DEBUG_LOCKS)
-                Stdout.formatln("[lockReleasedCompletely] Lock {} was already released by thread {}", rule, owner.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, "[lockReleasedCompletely] Lock {} was already released by thread {}", rule, owner.getName()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         if (ruleIndex < 0) {
             if (JobManager.DEBUG_LOCKS)
-                Stdout.formatln("[lockReleasedCompletely] Thread {} already released lock {}", owner.getName(), rule); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, "[lockReleasedCompletely] Thread {} already released lock {}", owner.getName(), rule); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         /**
@@ -438,12 +437,12 @@ class DeadlockDetector {
         //make sure the thread and lock exist in the graph
         if (threadIndex < 0) {
             if (JobManager.DEBUG_LOCKS)
-                Stdout.formatln("Thread {} was already removed.", owner.getName() ); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, "Thread {} was already removed.", owner.getName() ); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         if (lockIndex < 0) {
             if (JobManager.DEBUG_LOCKS)
-                Stdout.formatln("Lock {} was already removed.", lock ); //$NON-NLS-1$ //$NON-NLS-2$
+                getDwtLogger.info( __FILE__, __LINE__, "Lock {} was already removed.", lock ); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         if (graph[threadIndex][lockIndex] !is WAITING_FOR_LOCK)

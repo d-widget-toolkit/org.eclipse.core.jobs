@@ -12,7 +12,6 @@
 module org.eclipse.core.internal.jobs.JobMessages;
 
 import java.lang.JThread;
-import tango.io.Stdout;
 import tango.time.WallClock;
 import tango.text.convert.TimeStamp;
 
@@ -57,6 +56,6 @@ public class JobMessages : NLS {
         buffer.append(JThread.currentThread().getName());
         buffer.append("] "); //$NON-NLS-1$
         buffer.append(message);
-        Stdout.formatln(buffer.toString());
+        getDwtLogger.info( __FILE__, __LINE__, buffer.toString());
     }
 }
