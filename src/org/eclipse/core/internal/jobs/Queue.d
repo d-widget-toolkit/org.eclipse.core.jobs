@@ -12,7 +12,6 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.Queue;
 
-import tango.text.convert.Format;
 import java.lang.all;
 import java.util.Arrays;
 import java.util.ArrayList;

@@ -15,7 +15,6 @@ module org.eclipse.core.internal.jobs.WorkerPool;
 import java.lang.JThread;
 import tango.core.sync.Mutex;
 import tango.core.sync.Condition;
-import tango.text.convert.Format;
 import java.lang.all;
 import java.util.Set;
 

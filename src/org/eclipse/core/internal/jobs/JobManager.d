@@ -20,11 +20,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 import tango.io.Stdout;
-import tango.text.convert.Format;
 import tango.time.WallClock;
 import tango.time.Time;
 import java.lang.JThread;
-import tango.text.convert.Format;
 
 //don't use ICU because this is used for debugging only (see bug 135785)
 // import java.text.DateFormat;

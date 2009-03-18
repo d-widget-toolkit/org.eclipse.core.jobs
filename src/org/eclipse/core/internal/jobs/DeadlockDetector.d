@@ -14,7 +14,6 @@ module org.eclipse.core.internal.jobs.DeadlockDetector;
 
 import java.lang.JThread;
 import tango.io.Stdout;
-import tango.text.convert.Format;
 
 import java.lang.all;
 import java.util.ArrayList;

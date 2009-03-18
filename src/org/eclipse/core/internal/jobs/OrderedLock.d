@@ -12,7 +12,6 @@
  *******************************************************************************/
 module org.eclipse.core.internal.jobs.OrderedLock;
 
-import tango.text.convert.Format;
 import java.lang.JThread;
 import tango.io.Stdout;
 import java.lang.all;

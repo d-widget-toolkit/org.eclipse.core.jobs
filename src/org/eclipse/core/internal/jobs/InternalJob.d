@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.ObjectMap;
 
-import tango.text.convert.Format;
 
 /**
  * Internal implementation class for jobs. Clients must not implement this class

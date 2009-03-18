@@ -16,7 +16,6 @@ import java.lang.JThread;
 import tango.core.sync.Mutex;
 import tango.core.sync.Condition;
 import java.lang.all;
-import tango.text.convert.Format;
 
 public class Semaphore {
     protected long notifications;
