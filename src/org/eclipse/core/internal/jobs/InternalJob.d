@@ -192,6 +192,9 @@ public abstract class InternalJob : PlatformObject, Comparable {
     public final int compareTo(Object otherJob) {
         return (cast(InternalJob) otherJob).startTime >= startTime ? 1 : -1;
     }
+    public final override int opCmp( Object object ){
+        return compareTo( object );
+    }
 
     /* (non-Javadoc)
      * @see Job#done(IStatus)
