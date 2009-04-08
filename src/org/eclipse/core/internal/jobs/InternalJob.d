@@ -175,14 +175,14 @@ public abstract class InternalJob : PlatformObject, Comparable {
     /* (non-Javadoc)
      * @see Job#cancel()
      */
-    protected package bool cancel() {
+    /*protected package*/ bool cancel() {
         return manager.cancel_package(this);
     }
 
     /* (non-Javadoc)
      * @see Job#canceling()
      */
-    protected package void canceling() {
+    /*protected package*/ void canceling() {
         //default implementation does nothing
     }
 
@@ -224,7 +224,7 @@ public abstract class InternalJob : PlatformObject, Comparable {
     /* (non-Javadoc)
      * @see Job#getPriority()
      */
-    protected package int getPriority() {
+    /*protected package*/ int getPriority() {
         return priority;
     }
 
@@ -256,7 +256,7 @@ public abstract class InternalJob : PlatformObject, Comparable {
     /* (non-Javadoc)
      * @see Job#getRule
      */
-    protected package ISchedulingRule getRule() {
+    /*protected package*/ ISchedulingRule getRule() {
         return schedulingRule;
     }
     package ISchedulingRule getRule_package() {

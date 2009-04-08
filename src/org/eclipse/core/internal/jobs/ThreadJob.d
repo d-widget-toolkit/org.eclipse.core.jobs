@@ -77,7 +77,7 @@ class ThreadJob : Job {
      * ThreadJob represents.  This will be null if this thread
      * job is capturing a rule acquired outside of a job.
      */
-    protected package Job realJob;
+    /*protected package*/ Job realJob;
     /**
      * The stack of rules that have been begun in this thread, but not yet ended.
      */

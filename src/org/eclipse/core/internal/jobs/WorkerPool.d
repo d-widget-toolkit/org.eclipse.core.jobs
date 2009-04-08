@@ -81,7 +81,7 @@ class WorkerPool {
      */
     private Worker[] threads;
 
-    protected package this(JobManager manager) {
+    /*protected package*/ this(JobManager manager) {
         threads = new Worker[10];
         this.manager = manager;
         mutex = new Mutex;
@@ -164,7 +164,7 @@ class WorkerPool {
      * Notification that a job has been added to the queue. Wake a worker,
      * creating a new worker if necessary. The provided job may be null.
      */
-    protected package void jobQueued() {
+    /*protected package*/ void jobQueued() {
         synchronized(mutex){
             //if there is a sleeping thread, wake it up
             if (sleepingThreads > 0) {
