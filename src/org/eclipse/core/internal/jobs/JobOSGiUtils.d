@@ -58,7 +58,7 @@ class JobOSGiUtils {
     }
 
     void openServices() {
-        implMissing(__FILE__,__LINE__);
+        //FIXME implMissing(__FILE__,__LINE__);
 //         BundleContext context = JobActivator.getContext();
 //         if (context is null) {
 //             if (JobManager.DEBUG)
@@ -74,7 +74,7 @@ class JobOSGiUtils {
     }
 
     void closeServices() {
-        implMissing(__FILE__,__LINE__);
+        //FIXME implMissing(__FILE__,__LINE__);
 //         if (debugTracker !is null) {
 //             debugTracker.close();
 //             debugTracker = null;
@@ -86,7 +86,7 @@ class JobOSGiUtils {
     }
 
     public bool getBooleanDebugOption(String option, bool defaultValue) {
-        implMissing(__FILE__,__LINE__);
+        //FIXME implMissing(__FILE__,__LINE__);
         return false;
 //         if (debugTracker is null) {
 //             if (JobManager.DEBUG)
@@ -107,7 +107,7 @@ class JobOSGiUtils {
      * <code>null</code> if the bundle could not be determined.
      */
     public String getBundleId(Object object) {
-        implMissing(__FILE__,__LINE__);
+        //FIXME implMissing(__FILE__,__LINE__);
 //         if (bundleTracker is null) {
 //             if (JobManager.DEBUG)
 //                 JobMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
@@ -133,8 +133,8 @@ class JobOSGiUtils {
      * and <code>false</code> otherwise.
      */
     bool useDaemonThreads() {
-        implMissing(__FILE__,__LINE__);
-        return false;
+        //FIXME implMissing(__FILE__,__LINE__);
+        return true;
 //         BundleContext context = JobActivator.getContext();
 //         if (context is null) {
 //             //we are running stand-alone, so consult global system property
