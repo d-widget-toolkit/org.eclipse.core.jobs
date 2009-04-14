@@ -37,10 +37,8 @@ public class Semaphore {
      */
     public bool acquire(long delay) {
         synchronized(mutex){
-            implMissing( __FILE__, __LINE__ );
-// SWT
-//         if (Thread.interrupted())
-//             throw new InterruptedException();
+            if (Thread.interrupted())
+                throw new InterruptedException();
             long start = System.currentTimeMillis();
             long timeLeft = delay;
             while (true) {
