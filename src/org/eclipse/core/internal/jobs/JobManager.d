@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.LockListener;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
-import org.osgi.util.NLS;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.core.internal.jobs.ImplicitJobs;
 import org.eclipse.core.internal.jobs.WorkerPool;

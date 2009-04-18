@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.osgi.util.NLS;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.core.internal.jobs.InternalJob;
 import org.eclipse.core.internal.jobs.WorkerPool;

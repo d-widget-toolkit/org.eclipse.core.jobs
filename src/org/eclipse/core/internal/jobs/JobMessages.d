@@ -17,7 +17,7 @@ import tango.text.convert.TimeStamp;
 
 import java.lang.all;
 
-import org.osgi.util.NLS;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Job plugin message catalog

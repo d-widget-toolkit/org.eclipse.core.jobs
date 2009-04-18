@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
-import org.osgi.util.NLS;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.core.internal.jobs.JobChangeEvent;
 import org.eclipse.core.internal.jobs.InternalJob;
 import org.eclipse.core.internal.jobs.JobOSGiUtils;
